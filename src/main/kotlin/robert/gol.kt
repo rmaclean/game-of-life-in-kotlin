@@ -5,8 +5,8 @@ import java.util.Random
 const val rows = 20
 const val cols = 90
 
-fun ClosedRange<Int>.random() = Random().nextInt(endInclusive + 1 - start) + start
-var grid : Array<BooleanArray> = Array(rows, { _ -> BooleanArray(cols, { _ -> (0..5).random() == 0 })})
+val random = Random()
+var grid : Array<BooleanArray> = Array(rows, { _ -> BooleanArray(cols, { _ -> random.nextInt(5) == 0 })})
 
 class Console {
     private fun clear() {
@@ -24,42 +24,57 @@ class Console {
     }
 }
 
-data class Point(val row:Int, val col:Int)
-
-fun validPositions(position: Point):Array<Point> {
-    val ( row, col ) = position
-    return arrayOf(
-        Point(row-1, col-1), Point(row-1, col), Point(row-1, col+1),
-        Point(row  , col-1),                    Point(row  , col+1),
-        Point(row+1, col-1), Point(row+1, col), Point(row+1, col+1)
-    )
-}
-
-fun isValid(position: Point) = position.row in 1 until rows && position.col in 1 until cols
-
-fun readCell(position: Point) = grid[position.row][position.col]
-
-fun countNeighbours(position: Point) = validPositions(position)
-                                        .filter{ isValid(it) }
-                                        //.filter({prv -> isValid(prv)})
-                                        .map{ readCell(it) }
-                                        .count{ it }
-
 fun evolve():Array<BooleanArray> {
     val newGrid = Array<BooleanArray>(rows, {_ -> BooleanArray(cols) })
+    val rowLastIndex = rows -1;
+    val colsLastIndex = cols -1;
+    for (row in 0..rowLastIndex) {
+        for (col in 0..colsLastIndex) {
+            val alive = grid[row][col]
+            var neighbours = 0
 
-    (0 until rows).map{ row -> 
-        (0 until cols).map{ col -> 
-            val center = Point(row, col)
-            val isAlive = readCell(center)
-            val neighbours = countNeighbours(center)
-            newGrid[row][col] = (isAlive && !(neighbours < 2 || neighbours > 3)) || (neighbours == 3)
-        } 
+            if (row > 0) {
+                if (col > 0) {
+                    neighbours += if (grid[row-1][col-1]) 1 else 0 
+                }
+
+                neighbours += if (grid[row-1][col]) 1 else 0
+
+                if (col < colsLastIndex) {
+                    neighbours += if (grid[row-1][col+1]) 1 else 0 
+                }
+            }
+
+            if (col > 0) {
+                neighbours += if (grid[row][col-1]) 1 else 0 
+            }
+
+            if (col < colsLastIndex) {
+                neighbours += if (grid[row][col+1]) 1 else 0 
+            }
+
+            if (row < rowLastIndex) {
+                if (col > 0) {
+                    neighbours += if (grid[row+1][col-1]) 1 else 0 
+                }
+
+                neighbours += if (grid[row+1][col]) 1 else 0
+
+                if (col < colsLastIndex) {
+                    neighbours += if (grid[row+1][col+1]) 1 else 0 
+                }
+            }
+
+            if (alive) {
+                newGrid[row][col] = neighbours == 2 || neighbours == 3
+            } else {
+                newGrid[row][col] = neighbours == 3
+            }
+        }
     }
 
     return newGrid        
 }
-
 
 fun main(args: Array<String>) {
     val console = Console()
