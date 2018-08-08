@@ -12,7 +12,7 @@ class Console {
         print(String.format("%c[0;0f",0x1B));
     }
 
-    fun render(grid :List<List<Boolean>) {
+    fun render(grid :List<List<Boolean>>) {
         clear()
         
     }
