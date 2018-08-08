@@ -12,13 +12,11 @@ class Console {
         print(String.format("%c[0;0f",0x1B));
     }
 
-    fun render(grid :Array<BooleanArray>) {
+    fun render(grid :List<List<Boolean>) {
         clear()
         
     }
 }
-
-
 
 fun main(args: Array<String>) {
     val console = Console()
@@ -27,5 +25,3 @@ fun main(args: Array<String>) {
         Thread.sleep(200)
     }
 }
-
-
