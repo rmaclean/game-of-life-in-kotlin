@@ -31,7 +31,7 @@ data class Point(val row: Int, val col: Int) {
         Point(row, col - 1),                          Point(row, col + 1),
         Point(row + 1, col - 1), Point(row + 1, col), Point(row + 1, col + 1))
 
-    private fun isValidPosition(point:Point) = point.row in 1 until rows && point.col in 1 until cols
+    private fun isValidPosition(point:Point) = point.row in 0 until rows && point.col in 0 until cols
 
     fun positionState(point:Point = this) = grid[point.row][point.col]
 
